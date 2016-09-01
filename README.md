@@ -4,7 +4,7 @@ PCTRL is a Protocol-oblivious Forwarding (POF) controller which is developed bas
 
 The user of PCTRL needs to be familiar with POF protocol and its basic operation principles at first. 
 
-The knowledge of POF can be found at [www.pofowarding.org]().
+The knowledge of POF can be found at [www.poforwarding.org]().
 
 All POF related APIs can be found in `pox/openflow/pofmanager.py`. 
 
