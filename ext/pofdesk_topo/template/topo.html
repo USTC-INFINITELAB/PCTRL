@@ -1,0 +1,167 @@
+$def with (name)
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>
+        POF TOPOLOGY       
+    </title>
+    <link rel="stylesheet" href="static/css/bootstrap.css">
+
+	<link rel="stylesheet" type="text/css" href="static/themes/default/easyui.css">
+
+	<script type="text/javascript" src="static/js/jquery-1.7.2.min.js"></script>
+
+	<script type="text/javascript" src="static/js/jquery.easyui.min.js"></script>
+
+	<script type="text/javascript" src="static/js/uuid.js"></script>
+
+	<script type="text/javascript" src="static/js/kinetic-v3.10.4.js"></script>
+
+	<script type="text/javascript" src="static/js/kinetic_topology.js"></script>
+
+
+<!--**************************************************************-->
+
+    <style>
+        body {
+            padding-top: 90px; /* 改变文本到导航的距离*/
+      }
+    </style> 
+<div class="navbar navbar-fixed-top"><!--改变导航的颜色，一般取反色//-->
+        <div class="navbar-inner1" >
+            <div class="container">  
+                <a class="brand2" href="#"><img src="static/img/USTN.png" alt="加载中"align="left" width="70" height="70"/></a>
+					<a class="brand2">POF Management System</a>
+<br><br><a class="brand3">University of Science and Technology of China</a>
+                </ul>
+            </div>                
+        </div>
+    </div>    
+
+</head>
+
+<!--**************************************************************-->
+
+
+<body id="Topology">
+
+<table width="100%" height="100%" border="0">
+<tr valign="top">
+<td style="height:500px;width:50px;text-align:top;" bgColor="#7EC0EE">
+<style type="text/css">
+ul,li{margin:0;padding:0; list-style:none;}
+.daohang{width:192px;float:left;}
+.daohang ul{width:192px;float:left;}
+.daohang li{width:192px;height:50px;float:left; }
+.daohang li a{width:192px; padding-height:50px;background:#1E90FF;float:left; line-height:50px; color:#fff; font-weight:bold; font-size:14px; text-decoration:none;text-align:center;}
+.daohang li a:hover{background:#27408B;}
+#Topology #nav li#m1 a,
+#slot #nav li#m2 a,
+#protocol #nav li#m3 a, 
+#table #nav li#m4 a{width:192px; padding-height:50px;background:#27408B;float:left; line-height:50px; color:#fff; font-weight:bold; font-size:14px; text-decoration:none;text-align:center;}
+</style>
+<div class="daohang">
+	<ul id="nav">
+<br><br>
+    	<li id="m1"><a href="/topo/"><font size="4">Network Topology</font></a></li>
+<!--<br><br><br><br>
+        <li id="m2"><a href="/Spectrum/"><font size="4">Spectrum Utilization</font></a></li>-->
+<br><br><br><br>
+        <li id="m3"><a href="/protocol/"><font size="4">Protocol Messages</font></a></li>
+<br><br><br><br>
+        <li id="m4"><a href="/table/"><font size="4">Table Status</font></a></li>
+<br><br><br><br>
+        <li id="m5"><a href="/port/"><font size="4">Device Status</font></a></li>		
+    </ul>
+</div>
+</td>
+<td style="background-color:#EEEEEE;height:800px;width:100%;text-align:top;">
+
+<!--**************************************************************-->
+<STYLE>
+   #login{
+     position: relative;
+     display: none;
+         top: 20px;
+         left: 30px;
+         background-color: #ffffff;
+         text-align: center;
+         border: solid 1px;
+         padding: 10px;
+         z-index: 1;
+   }
+  
+</STYLE>
+<script>
+var jsonStr='$name'
+var topology=null; 
+		function saveJson()
+    	{
+    		jsonStr=topology.toJson();  
+    	}
+    	function loadJson(){
+    		topology.load(jsonStr);
+    	}
+    	function resize()
+    	{
+		 	topology.fitSizeAuto();
+    	}
+		window.onload=function(){
+    		topology = new Kinetic.Topology({
+	            container: "container",
+			    width:1250,
+			    height: 800,
+			    backgroundImage:"static/img/background1.png",
+			    connectorImage:"static/img/connector.png",
+			    toolbar:{
+			     	container:'toolbar',
+			     	data:[
+				    ]
+			    },
+			    popmenu:{
+			     	container:'mm',
+			     	data:[
+				    	{id:'menu_1',name:'delete link',onclick:function(evt,instance){topology.deleteCurrentObject();},filter:'line',iconCls:'icon-remove'},
+				    	{id:'menu_2',name:'delete device',onclick:function(evt,instance){topology.deleteCurrentObject();},filter:'device',iconCls:'icon-remove'},
+				    	{id:'menu_3',name:'save',onclick:function(evt,instance){saveJson();},filter:'all',iconCls:'icon-save'},
+				    	{id:'menu_4',name:'reload',onclick:function(evt,instance){loadJson();},filter:'all',iconCls:''}
+				    ]
+			    }
+          });
+          loadJson();
+    	}
+	</script>
+	<!-- 菜单  -->
+	<div region="north" border="false" style="height:auto;background:#B3DFDA;padding:5px">
+		<div style="width:auto;">
+			<a href="javascript:void(0)" id="mb1" class="easyui-menubutton" menu="#mm1" >menu</a>
+		</div>
+		<div id="mm1" style="width:150px;">
+			<div  onclick="loadJson();">reload</div>
+			<div iconCls="icon-save" onclick="saveJson();">save</div>
+		</div>
+	</div>
+	<!-- 绘图区  -->
+	<div id="   " region="center" title="">
+			<table cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<div id="container" style="border white 1px;"></div>
+						<div id="mm" style="width:120px;">  
+						</div>
+					</td>
+				</tr>
+			</table>
+	</div>
+<!--显示流表的信息层-->
+<div id="login">
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="background-color:#7EC0EE;text-align:center;">
+Copyright:Large-Scale Network and Computer Laboratory of the USTC</td>
+</tr>
+</table>
+</body>
+</html>

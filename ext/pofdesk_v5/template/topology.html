@@ -1,0 +1,237 @@
+$def with (name)
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>
+        POF TOPOLOGY       
+    </title>
+    <link rel="stylesheet" href="static/css/bootstrap.css">
+
+	<link rel="stylesheet" type="text/css" href="static/themes/default/easyui.css">
+
+	<script type="text/javascript" src="static/js/jquery-1.7.2.min.js"></script>
+
+	<script type="text/javascript" src="static/js/jquery.easyui.min.js"></script>
+
+	<script type="text/javascript" src="static/js/uuid.js"></script>
+
+	<script type="text/javascript" src="static/js/kinetic-v3.10.4.js"></script>
+
+	<script type="text/javascript" src="static/js/kinetic_topology.js"></script>
+<!--***************************增加内容***********************************-->
+	<script type="text/javascript" src="static/js/d3.js"></script>
+	<!--script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js?2.9.1"></script-->
+	<style type="text/css">
+	.link { stroke: green; stroke-linejoin:bevel;}
+	.nodetext {
+	    font: 12px sans-serif;
+	    -webkit-user-select:none;
+	    -moze-user-select:none;
+	    stroke-linejoin:bevel;
+	}
+
+	#topo{
+	    width:1000px;
+	    height:600px;
+	    border:1px solid gray;
+	    border-radius:5px;
+	    position:relative;
+	    margin:20px;
+	}
+	</style>
+<!--****************************增加内容**********************************-->
+    <style>
+        body {
+            padding-top: 90px; /* 改变文本到导航的距离*/
+      }
+    </style> 
+<div class="navbar navbar-fixed-top"><!--改变导航的颜色，一般取反色//-->
+        <div class="navbar-inner1" >
+            <div class="container">  
+                <a class="brand2" href="#"><img src="static/img/USTN.png" alt="加载中"align="left" width="70" height="70"/></a>
+					<a class="brand2">POF Management System</a>
+<br><br><a class="brand3">University of Science and Technology of China</a>
+                </ul>
+            </div>                
+        </div>
+    </div>    
+</head>
+<!--**************************************************************-->
+<body id="Topology">
+
+<table width="100%" height="100%" border="0">
+<tr valign="top">
+<td style="height:500px;width:50px;text-align:top;" bgColor="#7EC0EE">
+<style type="text/css">
+ul,li{margin:0;padding:0; list-style:none;}
+.daohang{width:192px;float:left;}
+.daohang ul{width:192px;float:left;}
+.daohang li{width:192px;height:50px;float:left; }
+.daohang li a{width:192px; padding-height:50px;background:#1E90FF;float:left; line-height:50px; color:#fff; font-weight:bold; font-size:14px; text-decoration:none;text-align:center;}
+.daohang li a:hover{background:#27408B;}
+#Topology #nav li#m1 a,
+#slot #nav li#m2 a,
+#protocol #nav li#m3 a, 
+#port #nav li#m5 a,
+#table #nav li#m4 a{width:192px; padding-height:50px;background:#27408B;float:left; line-height:50px; color:#fff; font-weight:bold; font-size:14px; text-decoration:none;text-align:center;}
+#switch_ports #nav li#m5 a,
+</style>
+<div class="daohang">
+	<ul id="nav">
+<br><br>
+    	<li id="m1"><a href="/topo/"><font size="4">Network Topology</font></a></li>
+    	<!--
+<br><br><br><br>
+        <li id="m2"><a href="/Spectrum/"><font size="4">Spectrum Utilization</font></a></li>
+        -->
+<br><br><br><br>
+        <li id="m3"><a href="/protocol/"><font size="4">Protocol Messages</font></a></li>
+<br><br><br><br>
+        <li id="m4"><a href="/table/"><font size="4">Table Status</font></a></li>
+<br><br><br><br>
+        <li id="m5"><a href="/port/"><font size="4">Device Status</font></a></li>		
+    </ul>
+</div>
+</td>
+<td background='static/img/background1.png' style="height:800px;width:100%;" align="left">
+<!--**************************************************************-->
+<!-- 菜单  -->
+<div region="north" border="false" style="height:auto;background:#B3DFDA;padding:5px">
+	<div style="width:auto;">
+		<a href="javascript:void(0)" id="mb1" class="easyui-menubutton" menu="#mm1" >menu</a>
+	</div>
+	<div id="mm1" style="width:150px;">
+		<div >reload</div>
+		<div iconCls="icon-save"">save</div>
+		
+	</div>
+</div>
+<!--draw--------------------------------------------------------------->
+<div id='topo'></div>
+<script type="text/javascript">
+function Topology(ele){
+    typeof(ele)=='string' && (ele=document.getElementById(ele));
+    var w=ele.clientWidth,
+        h=ele.clientHeight,
+        self=this;
+    this.force = d3.layout.force().gravity(.05).distance(200).charge(-800).size([w, h]);
+    this.nodes=this.force.nodes();
+    this.links=this.force.links();
+    //this.clickFn=function(){};
+    this.vis = d3.select(ele).append("svg:svg")
+                 .attr("width", w).attr("height", h).attr("pointer-events", "all");
+
+    this.force.on("tick", function(x) {
+      self.vis.selectAll("g.node")
+          .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+      self.vis.selectAll("line.link")
+          .attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+    });
+}
+
+Topology.prototype.doZoom=function(){
+    d3.select(this).select('g').attr("transform","translate(" + d3.event.translate + ")"+ " scale(" + d3.event.scale + ")");
+
+}
+//增加节点
+Topology.prototype.addNode=function(node){
+    this.nodes.push(node);
+}
+//增加多个节点
+Topology.prototype.addNodes=function(nodes){
+    if (Object.prototype.toString.call(nodes)=='[object Array]' ){
+        var self=this;
+        nodes.forEach(function(node){
+            self.addNode(node);
+        });
+    }
+}
+//增加连线
+Topology.prototype.addLink=function(source,target){
+    this.links.push({source:this.findNode(source),target:this.findNode(target)});
+}
+//增加多个连线
+Topology.prototype.addLinks=function(links){
+    if (Object.prototype.toString.call(links)=='[object Array]' ){
+        var self=this;
+        links.forEach(function(link){
+            self.addLink(link['source'],link['target']);
+        });
+    }
+}
+
+//查找节点
+Topology.prototype.findNode=function(id){
+    var nodes=this.nodes;
+    for (var i in nodes){
+        if (nodes[i]['id']==id ) return nodes[i];
+    }
+    return null;
+}
+//更新拓扑图状态信息
+Topology.prototype.update=function(){
+  var link = this.vis.selectAll("line.link")
+      .data(this.links, function(d) { return d.source.id + "-" + d.target.id; })
+      .attr("class", 'link');
+
+  link.enter().insert("svg:line", "g.node")
+      .attr("class",'link');
+
+  link.exit().remove();
+
+  var node = this.vis.selectAll("g.node")
+      .data(this.nodes, function(d) { return d.id;});
+
+  var nodeEnter = node.enter().append("svg:g")
+      .attr("class", "node")
+      .call(this.force.drag);
+
+  var self=this;
+  nodeEnter.append("svg:image")
+      .attr("class", "circle")
+      .attr("xlink:href","static/img/switch.png")
+      .attr("x", "-32px")
+      .attr("y", "-32px")
+      .attr("width", "64px")
+      .attr("height", "64px")
+
+  nodeEnter.append("svg:text")
+      .attr("class", "nodetext")
+      .attr("dx", 15)
+      .attr("dy", -35)
+      .text(function(d) { return d.id });
+
+  
+  node.exit().remove();
+
+  this.force.start();
+}
+var topology=new Topology('topo');
+
+var jsonStr ='$name';
+var json;
+json = eval('(' + jsonStr + ')');
+var nodes = json.device;
+var links = json.links;
+
+
+topology.addNodes(nodes);
+topology.addLinks(links);
+topology.update();
+</script>
+<!--显示流表的信息层-->
+<div id="login">
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="background-color:#7EC0EE;text-align:center;">
+Copyright:Large-Scale Network and Computer Laboratory of the USTC</td>
+</tr>
+</table>
+</body>
+</html>
