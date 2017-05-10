@@ -977,7 +977,7 @@ class POF_01_Task (Task):
                             new_sock = listener.accept()[0]
                             if pox.openflow.debug.pcap_traces:
                                 new_sock = wrap_socket(new_sock)
-                            new_sock.setblocking(1)     #changed by CC, changed to blocked
+                            new_sock.setblocking(0)    
                             # Note that instantiating a Connection object fires a
                             # ConnectionUp event (after negotation has completed)
                             newcon = Connection(new_sock)        # generate a new instance of class 'Connection'
